@@ -23,7 +23,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./cv.sql:/cv.sql
+      - ./docker/cv.sql:/cv.sql
 
   phpmyadmin:
     container_name: pma-cv
