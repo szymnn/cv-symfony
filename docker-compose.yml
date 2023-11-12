@@ -10,38 +10,24 @@ services:
     ports:
       - "${HTTP_PORT:-8080}:80"
     depends_on:
-      - db
+      - app
     container_name: php-cv
 
-  db:
-    image: mysql:5.7
-    restart: always
-    container_name: mysql-cv
+  app:
+    image: 'postgres:alpine'
+    container_name: database
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: cv
+      POSTGRES_PASSWORD: main
+      POSTGRES_USER: main
+      POSTGRES_DB: main
     ports:
-      - "3307:3306"
-    volumes:
-      - ./docker/cv.sql:/cv.sql
+      # To allow the host machine to access the ports below, modify the lines below.
+      # For example, to allow the host to connect to port 3306 on the container, you would change
+      # "3306" to "3306:3306". Where the first port is exposed to the host and the second is the container port.
+      # See https://docs.docker.com/compose/compose-file/compose-file-v3/#ports for more information.
+      - '5432'
 
-  phpmyadmin:
-    container_name: pma-cv
-    image: phpmyadmin/phpmyadmin:latest
-    restart: always
-    ports:
-      - 8081:80
-    depends_on:
-      - db
-
-  database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-front}
-    volumes:
-      - db-data:/var/lib/postgresql/data:rw
 volumes:
   db-data:
+  app_data:
 
