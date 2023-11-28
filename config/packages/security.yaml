@@ -19,9 +19,14 @@ security:
             pattern: ^/api/login
             stateless: true
             json_login:
-                check_path: /api/login_check
+                check_path: /api/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        api:
+            pattern: ^/api/auth
+            stateless: true
+            entry_point: jwt
+            jwt: ~
 
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -40,6 +45,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth, roles: IS_AUTHENTICATED_FULLY}
+        - { path: ^/api/auth/user, roles: [ROLE_USER, ROLE_ADMIN]}
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

@@ -3,49 +3,30 @@
 namespace App\Controller;
 
 
-use App\Entity\User;
+use App\Dto\AuthorizationDto;
 use App\Service\UserService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 #[Route('/api')]
 class AuthenticationController extends AbstractController
 {
 
-    private UserService $service;
-    public function __construct()
-    {
-        $this->service = new UserService();
+    public function __construct(
+        private readonly UserService $service
+    ){
     }
 
-    #[Route('/auth/register', name: 'register', methods: ['POST'])]
-//    #[OA\Response(
-//        response: 200,
-//        description: 'Returns the rewards of an user',
-//        content: new OA\JsonContent(
-//            type: 'object',
-//            properties:[
-//                new OA\Property('name', type: 'string',),
-//                new OA\Property('pass', type: 'string'),
-//            ]
-//        )
-//    )]
-
+    #[Route('/register', name: 'register', methods: ['POST'])]
     #[OA\Post(
         operationId: 'user-register',
         summary: 'Register',
         tags: ['Authorization'],
-//        responses: [
-//            new OA\Response(response: 201, description: 'user-register'),
-//            new OA\Response(response: 400, description: 'Bad request')
-//        ],
+
     )]
     #[OA\RequestBody(
         content: [
@@ -55,27 +36,25 @@ class AuthenticationController extends AbstractController
                     new OA\Property(
                         property: 'email',
                         type: 'string',
-                        nullable: false
+                        example: 'm@m.pl'
                     ),
                     new OA\Property(
                         property: 'password',
                         type: 'string',
-                        nullable: false
+                        example: '123456S'
                     ),
                 ])
             ),
         ]
     )]
-    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder, EntityManagerInterface $entityManager,ValidatorInterface $validator ): Response
+    public function register(#[MapRequestPayload] AuthorizationDto $dto): Response
     {
         try {
-            $params = json_decode($request->getContent());
-            $user = $this->service->store($params, $passwordEncoder, $entityManager,$validator);
+            $user = $this->service->store($dto);
             return $user;
 
         } catch (\Exception $e) {
-            return new Response($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
     }
-
 }
