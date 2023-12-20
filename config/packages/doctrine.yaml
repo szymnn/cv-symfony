@@ -20,6 +20,7 @@ doctrine:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
+        default_entity_manager: default
         mappings:
             App:
                 type: attribute
@@ -37,7 +38,7 @@ when@test:
 when@prod:
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
+            auto_generate_proxy_classes: true
             proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
             query_cache_driver:
                 type: pool

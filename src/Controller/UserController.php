@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\UserRepository;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +41,9 @@ class UserController extends AbstractController
 
     public function edit(Request $request, UserInterface $user)
     {
-       var_dump($user);
-       die();
+        var_dump($user->getRoles());
+        var_dump($user->getEmail());
+        die();
+//       return new JsonResponse( ["message" => ]);
     }
 }
